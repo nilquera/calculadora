@@ -285,7 +285,7 @@ void define_name (string var, double val, char t){
 }
 
 //declare a variable called "name" with the initial value "expression"
-double declaration()
+double declaration(char x)
 {
 	Token t = ts.get();
 	if (t.kind != name) error ("name expected in declaration");
@@ -295,7 +295,7 @@ double declaration()
 	if (t2.kind != '=') error ("'=' missing in declaration of ", var_name);
 	
 	double d = expression();
-	define_name (var_name, d, 'v');
+	define_name (var_name, d, x);
 	return d;
 }
 
@@ -304,7 +304,9 @@ double statement(){
 	Token t = ts.get();
 	switch(t.kind){
 		case hashy:
-			return declaration();
+			return declaration('v');
+		case const_create:
+			return declaration('c');
 		default:
 			ts.putback(t);
 			return expression();

@@ -37,6 +37,8 @@ const char square = 'S';
 const string sqrtkey = "sqrt"; 
 const char pw = 'P';
 
+const char const_create = '@'; //per crear constants 
+
 
 //get: cin un token
 Token Token_stream::get()
@@ -84,6 +86,7 @@ Token Token_stream::get()
 	    		cin.putback(ch);
 	    		if (s == sqrtkey) return Token(square);
 	    		if (s == "pow") return Token(pw);
+	    		if (s == "const") return Token(const_create, s);
 	    		return Token(name,s); //(.kind name , .name s)
 			}
 	        error("Bad token");
