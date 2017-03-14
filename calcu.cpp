@@ -59,8 +59,9 @@ class Variable {
 	public:
 		string name;
 		double value;
-	Variable (string n, double v)
-		: name(n), value(v) {}
+		char type;
+	Variable (string n, double v, char t)
+		: name(n), value(v), type(t) {}
 };
 
 
@@ -257,7 +258,7 @@ bool is_declared(string var){
 }
 
 //push_back nova variable amb valor
-void define_name (string var, double val){
+void define_name (string var, double val, char t){
 	if (is_declared(var)){
 		cout << "Do you really want to give another value to "
 				<< var << "? (y/n) ";
@@ -267,14 +268,19 @@ void define_name (string var, double val){
 		} while (ans!='y' && ans!='n');
 		if (ans=='y'){
 			for (int i=0; i<var_table.size(); ++i) {
-				if (var_table[i].name == var) {
-					var_table[i].value = val;
+				if (var_table[i].type == 'c') {
+					cout << "You can't change a constant's value\n";
 					return;
-				}
+				} else if (var_table[i].type == 'v') {
+					if (var_table[i].name == var) {
+						var_table[i].value = val;
+						return;
+					}
+				} else error ("Unknown value for type");
 			}
 		} else if (ans=='n') return; //don't want to change it's value
 	}
-	else var_table.push_back(Variable(var,val));
+	else var_table.push_back(Variable(var,val, t));
 	return;
 }
 
@@ -289,7 +295,7 @@ double declaration()
 	if (t2.kind != '=') error ("'=' missing in declaration of ", var_name);
 	
 	double d = expression();
-	define_name (var_name, d);
+	define_name (var_name, d, 'v');
 	return d;
 }
 
@@ -308,9 +314,9 @@ double statement(){
 // calculate
 void calculate() {
 	// predefine names:
-	define_name("pi",3.1415926535);
-	define_name("e",2.7182818284);
-	define_name("k", 1000);
+	define_name("pi",3.1415926535, 'c');
+	define_name("e",2.7182818284, 'c');
+	define_name("k", 1000, 'c');
 	
 	while (cin) {
 	    	try {
