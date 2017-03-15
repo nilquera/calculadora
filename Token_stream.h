@@ -2,6 +2,7 @@
 const char number = '8';
 const char quit = 'q'; // t.kind==quit means that t is a quit Token
 const char print = ';'; // t.kind==print means that t is a print Token
+const char help = 'h';
 const string prompt = "> ";
 const string result = "= "; // used to indicate that what follows is a result
 
@@ -47,14 +48,12 @@ Token Token_stream::get()
         // remove token from buffer
         full=false;
         return buffer;
-    } 
+    }
 
     char ch;
     cin >> ch;    // note that >> skips whitespace (space, newline, tab, etc.)
-
     switch (ch) {
 	    case print:    // for "print"
-	    case quit:    // for "quit"
 	    case '(': 
 		case ')': 
 		case '{': 
@@ -87,6 +86,8 @@ Token Token_stream::get()
 	    		if (s == sqrtkey) return Token(square);
 	    		if (s == "pow") return Token(pw);
 	    		if (s == "const") return Token(const_create, s);
+	    		if (s == "quit") return Token(quit);
+	    		if (s=="help"||s=="HELP"||s=="Help") return Token(help); //helpmessage: quan s'escriu "help"
 	    		return Token(name,s); //(.kind name , .name s)
 			}
 	        error("Bad token");

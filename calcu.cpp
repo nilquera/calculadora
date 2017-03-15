@@ -96,6 +96,9 @@ int factorial (int);
 //declaració per a que primary() pugui cridar empression()
 double expression();
 
+//declaració per a que calculate() pugui cridar help_message()
+void help_message(); 
+
 //deal with Fs and parentheses
 double primary()
 {
@@ -268,15 +271,17 @@ void define_name (string var, double val, char t){
 		} while (ans!='y' && ans!='n');
 		if (ans=='y'){
 			for (int i=0; i<var_table.size(); ++i) {
-				if (var_table[i].type == 'c') {
-					cout << "You can't change a constant's value\n";
-					return;
-				} else if (var_table[i].type == 'v') {
-					if (var_table[i].name == var) {
-						var_table[i].value = val;
+				if (var_table[i].name == var) {
+					if (var_table[i].type == 'c') {
+						cout << "You can't change a constant's value\n";
 						return;
-					}
-				} else error ("Unknown value for type");
+					} else if (var_table[i].type == 'v') {
+					 	{
+							var_table[i].value = val;
+							return;
+						}
+					} else error ("Unknown value for type");
+				}
 			}
 		} else if (ans=='n') return; //don't want to change it's value
 	}
@@ -304,9 +309,9 @@ double statement(){
 	Token t = ts.get();
 	switch(t.kind){
 		case hashy:
-			return declaration('v');
+			return declaration('v'); //variable
 		case const_create:
-			return declaration('c');
+			return declaration('c'); //constant
 		default:
 			ts.putback(t);
 			return expression();
@@ -325,6 +330,10 @@ void calculate() {
 		        Token t = ts.get();
 		        while (t.kind == print) t=ts.get();
 		        if (t.kind == quit) return;
+		        while (t.kind == help) {
+		        	help_message();
+		        	t=ts.get();
+		        }
 		    	ts.putback(t);
 		        cout << result << statement() << '\n';
 			} catch (exception& e) {
@@ -342,7 +351,7 @@ void calculate() {
 int main()
 try
 {
-	missatge();
+	cout << "\nType 'help' for a help message\n\n";
     calculate();
 	keep_window_open();
 	return 0;
@@ -370,7 +379,8 @@ int factorial (int n){
 }
 
 // missatge inicial
-void missatge (){
+void help_message (){
+	cout << '\n';
 	for (int i = 0; i < 47; i++){
 		cout << "=";
 	}
@@ -379,7 +389,7 @@ void missatge (){
 		cout << "=";
 	}
 	cout << "\n\n";
-	cout << "Operacions principals:         suma (+)    resta (-)    producte (*)    divisio (/)\n\n"
+	cout << "Acabar cada operació amb ';'\n\nOperacions principals:         suma (+)    resta (-)    producte (*)    divisio (/)\n\n"
 		<< "Operacions especials:         factorial: valor!      arrel quadrada: sqrt(valor)    potència: pow(valor, exponent)\n\n";
 	
 	for (int i = 0; i < 120; i++){
